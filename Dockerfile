@@ -5,9 +5,11 @@ RUN apk add --no-cache --update --virtual build-dependencies alpine-sdk git auto
 
 FROM buildbase AS build
 
+ENV XDEBUGVERSION="2.7.0RC2"
+
 # install PHP extensions & composer
 RUN apk add --no-cache --update --virtual php-dependencies zlib-dev icu-dev libzip-dev \
-    && apk add --no-cache --update imagemagick git mysql-client wget mediainfo \
+    && apk add --no-cache --update imagemagick git mysql-client wget \
     && pecl install redis-4.0.2 \
 	&& docker-php-ext-install opcache \
 	&& docker-php-ext-install intl \
@@ -27,8 +29,14 @@ RUN apk add --no-cache --update rabbitmq-c rabbitmq-c-dev \
     && cd ../ && rm -rf /tmp/php-amqp \
     && docker-php-ext-enable amqp
 
-RUN yes | git clone git://github.com/xdebug/xdebug.git && cd xdebug && sh rebuild.sh \
-    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+RUN curl -sS https://xdebug.org/files/xdebug-${XDEBUGVERSION}.tgz | tar -xz -C / \
+    && cd /xdebug-${XDEBUGVERSION} \
+    && phpize \
+    && ./configure --enable-xdebug \
+    && make \
+    && make install \
+    && rm -r /xdebug-${XDEBUGVERSION} \
+    && docker-php-ext-enable xdebug \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
