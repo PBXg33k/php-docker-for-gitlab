@@ -9,7 +9,7 @@ ENV XDEBUGVERSION="2.7.0RC2"
 
 # install PHP extensions & composer
 RUN apk add --no-cache --update --virtual php-dependencies zlib-dev icu-dev libzip-dev \
-    && apk add --no-cache --update imagemagick git mysql-client wget \
+    && apk add --no-cache --update imagemagick git mysql-client wget openssl \
     && pecl install redis-4.0.2 \
 	&& docker-php-ext-install opcache \
 	&& docker-php-ext-install intl \
