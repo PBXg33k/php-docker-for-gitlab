@@ -43,6 +43,4 @@ RUN curl -sS https://xdebug.org/files/xdebug-${XDEBUGVERSION}.tgz | tar -xz -C /
 FROM build AS final
 WORKDIR /app
 
-ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
-
 CMD ["composer"]
