@@ -9,7 +9,7 @@ ENV XDEBUGVERSION="2.7.0RC2"
 
 # install PHP extensions & composer
 RUN apk add --no-cache --update --virtual php-dependencies zlib-dev icu-dev libzip-dev \
-    && apk add --no-cache --update imagemagick git mysql-client wget openssl libxml2-dev php-xml php-soap \
+    && apk add --no-cache --update imagemagick git mysql-client wget openssl libxml2-dev php-xml php-soap libsodium-dev \
     && pecl install redis-4.0.2 \
 	&& docker-php-ext-install opcache \
 	&& docker-php-ext-install intl \
@@ -27,6 +27,8 @@ RUN apk add --no-cache --update rabbitmq-c rabbitmq-c-dev \
     && cd /tmp/php-amqp \
     && phpize && ./configure && make && make install \
     && cd ../ && rm -rf /tmp/php-amqp \
+    && docker-php-ext-install xml \
+    && docker-php-ext-install soap \
     && docker-php-ext-enable amqp
 
 RUN curl -sS https://xdebug.org/files/xdebug-${XDEBUGVERSION}.tgz | tar -xz -C / \
